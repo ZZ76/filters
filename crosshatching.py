@@ -134,7 +134,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         pass
     else:
-        img = cv2.imread('lena.png')
+        img = cv2.imread('lena.jpg')
         main(img)
         #vd(Numberoftsh=7)
 else:
