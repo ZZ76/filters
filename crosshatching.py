@@ -33,6 +33,7 @@ def lines(img, code=None, step=12):
             l = cv2.line(l, (i, 0), (0, int(i*tantheta)), black)
     else:
         pass   # empty
+    print('0')
     return l
 
 
@@ -45,7 +46,6 @@ def tsh(img, stage=None, Numberoftsh=None, equalizeHist=False):
         img_gray = cv2.equalizeHist(img_gray, img_gray)
     _, th = cv2.threshold(img_gray, 255-int(((stage)/Numberoftsh)*255), 255, type)
     th = cv2.cvtColor(th, cv2.COLOR_GRAY2BGR)
-    print(255-int(((stage+1)/Numberoftsh)*255), 255)
     return th
 
 
@@ -53,8 +53,13 @@ def crosshatching(img, Numberoftsh=None, equalizeHist=False):
     dst2 = np.zeros((h, w, 3), np.uint8)
     dst2[:] = 255
     for i in range(Numberoftsh):
-        mask = lines(img, code=seqline[i], step=8)
-        print(i, seqline[i])
+        if seqline[i] == 4:
+            step = 16
+        elif seqline[i] == 5:
+            step = 10
+        else:
+            step = 8
+        mask = lines(img, code=seqline[i], step=step)
         th = tsh(img, stage=i, Numberoftsh=Numberoftsh, equalizeHist=equalizeHist)
         dst = cv2.addWeighted(mask, 1, th, 1, 0)
         dst = cv2.bitwise_and(dst, dst2)
@@ -62,10 +67,40 @@ def crosshatching(img, Numberoftsh=None, equalizeHist=False):
     return dst2
 
 
-def main(img, Numberoftsh = 7, equalizeHist=True):
-    global w, h, seqline
+def createmasks(img, Numberoftsh=None):
+    global masks
+    #masks = None
+    np.zeros((h, w, 3), np.uint8)
+    for i in range(Numberoftsh):
+        if seqline[i] == 4:
+            step = 16
+        elif seqline[i] == 5:
+            step = 10
+        else:
+            step = 8
+        if masks is not None:
+            masks = np.append(masks, np.expand_dims(lines(img, code=seqline[i], step=step), axis=0), axis=0)
+        else:
+            masks = lines(img, code=seqline[i], step=step)
+            masks = np.expand_dims(masks, axis=0)
+        #print(masks.shape)
+    return masks
+
+
+def videocrosshatching(img, Numberoftsh=None, equalizeHist=False):
+    dst2 = np.zeros((h, w, 3), np.uint8)
+    dst2[:] = 255
+    for i in range(Numberoftsh):
+        th = tsh(img, stage=i, Numberoftsh=Numberoftsh, equalizeHist=equalizeHist)
+        dst = cv2.addWeighted(masks[i], 1, th, 1, 0)
+        dst = cv2.bitwise_and(dst, dst2)
+        dst2 = dst
+    return dst2
+
+
+def main(img, Numberoftsh = 7, equalizeHist=False):
+    global w, h
     h, w, _ = img.shape
-    seqline = (-1, 0, 4, 3, 5, 1, 2)
     dst = crosshatching(img, Numberoftsh=Numberoftsh, equalizeHist=equalizeHist)
     #dst = cv2.resize(dst, (int(w/2), int(h/2)))
     cv2.imshow('dst', dst)
@@ -73,24 +108,35 @@ def main(img, Numberoftsh = 7, equalizeHist=True):
     cv2.destroyAllWindows()
 
 
-def vd(img):
-    global w, h, seqline, Numberoftsh
-    h, w, _ = img.shape
-    seqline = (0, 3, 1, 2)
-    Numberoftsh = 5
-    dst = crosshatching(img)
-    return dst
+def vd(Numberoftsh=None):
+    global w, h
+    cap = cv2.VideoCapture(0)
+    flag = False
+    while (True):
+        _, frame = cap.read()
+        h, w, _ = frame.shape
+        if flag == False:
+            createmasks(frame, Numberoftsh=Numberoftsh)
+            flag = True
+        frame = videocrosshatching(frame, Numberoftsh=Numberoftsh)
+        cv2.imshow('main', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
 
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (0, 0, 255)
+seqline = (-1, 0, 4, 3, 5, 2, 1)
+masks = None
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         pass
     else:
-        img = cv2.imread('lena.jpg')
+        img = cv2.imread('lena.png')
         main(img)
+        #vd(Numberoftsh=7)
 else:
     pass
 
