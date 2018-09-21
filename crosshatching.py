@@ -5,7 +5,7 @@ from numpy import random as nr
 import sys
 
 
-def lines(img, code=None, step=12):
+def lines(code=None, step=12):
     l = np.zeros((h, w, 3), np.uint8)
     l[:] = 255
 
@@ -16,7 +16,7 @@ def lines(img, code=None, step=12):
         for i in range(0, w, step):
             l = cv2.line(l, (i, 0), (i, h), black)
     elif code == 2:  # \ 45
-        l = lines(img, code=3, step=step)
+        l = lines(code=3, step=step)
         l = cv2.flip(l, 0)
     elif code == 3:  # / 45
         for i in range(0, 2*w, step):
@@ -33,7 +33,6 @@ def lines(img, code=None, step=12):
             l = cv2.line(l, (i, 0), (0, int(i*tantheta)), black)
     else:
         pass   # empty
-    print('0')
     return l
 
 
@@ -59,7 +58,7 @@ def crosshatching(img, Numberoftsh=None, equalizeHist=False):
             step = 10
         else:
             step = 8
-        mask = lines(img, code=seqline[i], step=step)
+        mask = lines(code=seqline[i], step=step)
         th = tsh(img, stage=i, Numberoftsh=Numberoftsh, equalizeHist=equalizeHist)
         dst = cv2.addWeighted(mask, 1, th, 1, 0)
         dst = cv2.bitwise_and(dst, dst2)
@@ -70,7 +69,7 @@ def crosshatching(img, Numberoftsh=None, equalizeHist=False):
 def createmasks(img, Numberoftsh=None):
     global masks
     #masks = None
-    np.zeros((h, w, 3), np.uint8)
+    #np.zeros((h, w, 3), np.uint8)
     for i in range(Numberoftsh):
         if seqline[i] == 4:
             step = 16
@@ -79,9 +78,9 @@ def createmasks(img, Numberoftsh=None):
         else:
             step = 8
         if masks is not None:
-            masks = np.append(masks, np.expand_dims(lines(img, code=seqline[i], step=step), axis=0), axis=0)
+            masks = np.append(masks, np.expand_dims(lines(code=seqline[i], step=step), axis=0), axis=0)
         else:
-            masks = lines(img, code=seqline[i], step=step)
+            masks = lines(code=seqline[i], step=step)
             masks = np.expand_dims(masks, axis=0)
         #print(masks.shape)
     return masks
@@ -118,7 +117,7 @@ def vd(Numberoftsh=None):
         if flag == False:
             createmasks(frame, Numberoftsh=Numberoftsh)
             flag = True
-        frame = videocrosshatching(frame, Numberoftsh=Numberoftsh)
+        frame = videocrosshatching(frame, Numberoftsh=Numberoftsh,  equalizeHist=False)
         cv2.imshow('main', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -127,6 +126,8 @@ def vd(Numberoftsh=None):
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (0, 0, 255)
+green = (0, 255, 0)
+blue = (255, 0, 0)
 seqline = (-1, 0, 4, 3, 5, 2, 1)
 masks = None
 
@@ -135,9 +136,7 @@ if __name__ == "__main__":
         pass
     else:
         img = cv2.imread('lena.jpg')
-        main(img)
-        #vd(Numberoftsh=7)
-else:
-    pass
+        #main(img)
+        vd(Numberoftsh=7)
 
 
