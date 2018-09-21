@@ -1,0 +1,7 @@
+*.jpg
+*.wmv
+*.psd
+/__pycache__/*
+/.idea/*
+__pycache__/crosshatching.cpython-36.pyc
+.idea/workspace.xml

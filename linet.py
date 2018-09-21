@@ -3,7 +3,7 @@ import numpy as np
 import math
 from numpy import random as nr
 
-img = cv2.imread('lena.jpg')
+img = cv2.imread('gray.jpg')
 h, w, _ = img.shape
 black = (0, 0, 0)
 white = (255, 255, 255)
