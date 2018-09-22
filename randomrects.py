@@ -59,29 +59,32 @@ def main(mode='rect'):
     global mask, canvas, minl, maxl
     if mode == 'rect':
         list = rectlist
-    elif mode == 'circle':
+    else:
         list = circlelist
     for k in range(len(list)):
         minl = list[k][0]
         maxl = list[k][1]
         for i in range(list[k][2]):
             mask[:] = 0
-            #mask = randomrects(mask)
-            mask = randomcircle(mask)
-            color = avgcolor(src, mask)
-            #_, contours, hierarchy = cv2.findContours(mask, 1, 2)
-            #cnt = contours[0]
-            #canvas = cv2.fillPoly(canvas, [cnt], color)
-            canvas = cv2.circle(canvas, (x, y), cr, color, thickness=-1, lineType=cv2.LINE_AA)
+            if mode == 'rect':
+                mask = randomrects(mask)
+                color = avgcolor(src, mask)
+                _, contours, hierarchy = cv2.findContours(mask, 1, 2)
+                cnt = contours[0]
+                canvas = cv2.fillPoly(canvas, [cnt], color)
+            else:
+                mask = randomcircle(mask)
+                color = avgcolor(src, mask)
+                canvas = cv2.circle(canvas, (x, y), cr, color, thickness=-1, lineType=cv2.LINE_AA)
     return canvas
 
 
 rectlist = [(200, 250, 10), (100, 150, 20), (60, 80, 30), (40, 60, 40), (10, 30, 50), (5, 20, 50)]
-circlelist = [(80, 120, 25), (50, 80, 35), (30, 40, 60), (20, 30, 80), (5, 15, 120), (3, 10, 120)]
+circlelist = [(80, 120, 25), (50, 80, 35), (30, 40, 60), (20, 30, 80), (5, 15, 110), (3, 10, 110)]
 # minx, maxl, loop times
 
 
-src = cv2.imread('kim.jpg')
+src = cv2.imread('owl.jpg')
 h, w, _ = src.shape
 w, h = 400, int(h*400/w)
 src = cv2.resize(src, (w, h))
@@ -92,5 +95,7 @@ canvas[:] = 255
 canvas = main(mode='circle')
 
 cv2.imshow('canvas', canvas)
-cv2.waitKey(0)
+k = cv2.waitKey(0) & 0xFF
+if k == ord('s'):
+    cv2.imwrite('randomcircle.png', canvas)
 cv2.destroyAllWindows()

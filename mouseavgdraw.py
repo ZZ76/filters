@@ -30,10 +30,12 @@ def mousecontrol(event, x, y, flags, param):
 
 
 def drawonsrc(x1, y1, x2, y2, maskgray=None):
-    global masktoshow, src, xc, yc, rc
+    global masktoshow, canvasmask, src, xc, yc, rc
     masktoshow = src.copy()
+    canvasmask = canvas.copy()
     xc, yc, rc = int((x2+x1)/2), int((y2+y1)/2), abs(int((x2-x1)/2))
     cv2.circle(masktoshow, (xc, yc), rc, (0, 255, 0), 2, lineType=cv2.LINE_AA)
+    cv2.circle(canvasmask, (xc, yc), rc, (0, 255, 0), 2, lineType=cv2.LINE_AA)
     if maskgray is not None:
         maskgray[:] = 0
         cv2.circle(maskgray, (xc, yc), rc, 255, -1, lineType=cv2.LINE_AA)
@@ -65,32 +67,54 @@ def avgcolor(src, mask):
     avgcolor = (int(avgcolor[0]), int(avgcolor[1]), int(avgcolor[2]))
     return avgcolor
 
+
+def main(src, loadimg=None):
+    global maskgray, masktoshow, canvas, canvasmask, readytoavg
+    maskgray = np.zeros((h, w, 1), np.uint8)
+    if loadimg is None:
+        canvas = np.zeros((h, w, 3), np.uint8)
+        canvas[:] = 255
+    else:
+        canvas = loadimg
+    masktoshow = src.copy()
+    #canvasmask = canvas.copy()
+    cv2.namedWindow('masktoshow')
+    cv2.setMouseCallback('masktoshow', mousecontrol)
+    cv2.namedWindow('canvas')
+    cv2.setMouseCallback('canvas', mousecontrol)
+    canvasmask = canvas.copy()
+    while(1):
+        cv2.imshow('masktoshow', masktoshow)
+        cv2.imshow('canvas', canvasmask)
+        #cv2.imshow('canvasmask', canvasmask)
+        cv2.imshow('maskgray', maskgray)
+        k = cv2.waitKey(1) & 0xFF
+        if k == ord('c'):
+            if readytoavg is True:
+                color = avgcolor(src, maskgray)
+                print(color)
+                cv2.circle(canvas, (xc, yc), rc, color, -1, lineType=cv2.LINE_AA)
+                canvasmask = canvas.copy()
+                drawonsrc(x1, y1, x2, y2)
+        elif k == ord('s'):
+            cv2.imwrite('canvas.png', canvas)
+        elif k == ord('e'):
+            masktoshow = src.copy()
+            canvasmask = canvas.copy()
+            maskgray[:] = 0
+        elif k == 27:
+            break
+
+    cv2.destroyAllWindows()
+
+
 pt1 = False
-src = cv2.imread('kim.jpg')
+readytoavg = False
+
+src = cv2.imread('owl.jpg')
 h, w, _ = src.shape
 w, h = 400, int(h*400/w)
 src = cv2.resize(src, (w, h))
-maskgray = np.zeros((h, w, 1), np.uint8)
-canvas = np.zeros((h, w, 3), np.uint8)
-canvas[:] = 255
-mode = 0
-masktoshow = src.copy()
-cv2.namedWindow('masktoshow')
-cv2.setMouseCallback('masktoshow', mousecontrol)
+loadimg = cv2.imread('randomcircle.png')
 
-while(1):
-    cv2.imshow('masktoshow', masktoshow)
-    cv2.imshow('canvas', canvas)
-    cv2.imshow('maskgray', maskgray)
-    k = cv2.waitKey(1) & 0xFF
-    if k == ord('c'):
-        if readytoavg is True:
-            color = avgcolor(src, maskgray)
-            print(color)
-            cv2.circle(canvas, (xc, yc), rc, color, -1, lineType=cv2.LINE_AA)
-    elif k == ord('s'):
-        cv2.imwrite('canvas.png', canvas)
-    elif k == 27:
-        break
-
-cv2.destroyAllWindows()
+main(src, loadimg=loadimg)
