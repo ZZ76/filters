@@ -102,6 +102,7 @@ def main(src, loadimg=None):
             masktoshow = src.copy()
             canvasmask = canvas.copy()
             maskgray[:] = 0
+            readytoavg = False
         elif k == 27:
             break
 
@@ -111,7 +112,7 @@ def main(src, loadimg=None):
 pt1 = False
 readytoavg = False
 
-src = cv2.imread('owl.jpg')
+src = cv2.imread('tree.jpg')
 h, w, _ = src.shape
 w, h = 400, int(h*400/w)
 src = cv2.resize(src, (w, h))

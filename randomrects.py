@@ -84,7 +84,7 @@ circlelist = [(80, 120, 25), (50, 80, 35), (30, 40, 60), (20, 30, 80), (5, 15, 1
 # minx, maxl, loop times
 
 
-src = cv2.imread('owl.jpg')
+src = cv2.imread('tree.jpg')
 h, w, _ = src.shape
 w, h = 400, int(h*400/w)
 src = cv2.resize(src, (w, h))
