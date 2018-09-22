@@ -11,7 +11,7 @@ class dot:
         self.r_now = 0  # radius
         self.r_next = 0
         self.r_target = 0
-        self.speed = 2  # change speed
+        self.speed = 2  # 2 change speed
 
     def update(self, img, newradius=None, color=None):
         if newradius is not None:
@@ -102,10 +102,10 @@ def videodots(video=None):
         updatematrix(gm, f, dots, colormat=cm)
         cm = cv2.resize(cm, (w, h), interpolation=cv2.INTER_AREA)
         gm = cv2.resize(gm, (w, h), interpolation=cv2.INTER_AREA)
-        f = cv2.resize(f, (w, h))
-        cv2.imshow('mask', cm)
+        #f = cv2.resize(f, (w, h))
+        #cv2.imshow('mask', cm)
         cv2.imshow('f', f)
-        cv2.imshow('gm', gm)
+        #cv2.imshow('gm', gm)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     cap.release()
@@ -135,7 +135,7 @@ def imagedots(img):
 black = (0, 0, 0)
 maxradius = 15   # 15
 dots = None
-resizerate = 20   # default 25, w/resizerate and h/resizerate is how many dots in x and y axis
+resizerate = 25   # default 25, w/resizerate and h/resizerate is how many dots in x and y axis
 
 #vd = cv2.VideoCapture('Wildlife.wmv')
 videodots()

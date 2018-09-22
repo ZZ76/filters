@@ -9,7 +9,7 @@ while(True):
     _, frame = cap.read()
     ch.h, ch.w, _ = frame.shape
     frame = cv2.flip(frame, 1)
-    frame = ch.videocrosshatching(frame, Numberoftsh=7, equalizeHist=False, color=True)
+    frame = ch.crosshatching(frame, Numberoftsh=7, equalizeHist=False, color=True)
     #frame = cv2.resize(frame, (int(ch.w * 1.5), int(ch.h * 1.5)))
     cv2.imshow('main', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):

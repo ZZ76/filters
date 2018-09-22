@@ -1,8 +1,10 @@
 *.jpg
+*.png
 *.wmv
 *.psd
 circles.py
 linet.py
-vd_dots.py
+avgcolorinpoly.py
+mouse.py
 __pycache__/
 .idea/

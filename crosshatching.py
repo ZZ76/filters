@@ -48,28 +48,6 @@ def tsh(img, stage=None, Numberoftsh=None, equalizeHist=False):
     return th
 
 
-def crosshatching(img, Numberoftsh=7, equalizeHist=False, color=False):
-    dst2 = np.zeros((h, w, 3), np.uint8)
-    dst2[:] = 255
-    for i in range(Numberoftsh):
-        if seqline[i] == 4:
-            step = 16
-        elif seqline[i] == 5:
-            step = 10
-        else:
-            step = 8
-        mask = lines(code=seqline[i], step=step)
-        th = tsh(img, stage=i, Numberoftsh=Numberoftsh, equalizeHist=equalizeHist)
-        dst = cv2.addWeighted(mask, 1, th, 1, 0)
-        dst = cv2.bitwise_and(dst, dst2)
-        dst2 = dst
-    if color is False:
-        return dst2
-    else:
-        dst2 = cv2.bitwise_or(dst2, img)
-        return dst2
-
-
 def createmasks(img, Numberoftsh=None):
     global masks
     for i in range(Numberoftsh):
@@ -88,7 +66,7 @@ def createmasks(img, Numberoftsh=None):
     return masks
 
 
-def videocrosshatching(img, Numberoftsh=None, equalizeHist=False, color=False):
+def crosshatching(img, Numberoftsh=None, equalizeHist=False, color=False):
     global frame, flag, w, h
     h, w, _ = img.shape
     frame = np.zeros((h, w, 3), np.uint8)
@@ -123,7 +101,7 @@ def playvideo(video, Numberoftsh=None, color=False):
     global w, h
     while (True):
         _, frame = video.read()
-        frame = videocrosshatching(frame, Numberoftsh=Numberoftsh, equalizeHist=False, color=color)
+        frame = crosshatching(frame, Numberoftsh=Numberoftsh, equalizeHist=False, color=color)
         cv2.imshow('main', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -131,9 +109,9 @@ def playvideo(video, Numberoftsh=None, color=False):
 
 black = (0, 0, 0)
 white = (255, 255, 255)
-red = (0, 0, 255)
-green = (0, 255, 0)
-blue = (255, 0, 0)
+#red = (0, 0, 255)
+#green = (0, 255, 0)
+#blue = (255, 0, 0)
 seqline = (-1, 0, 4, 3, 5, 2, 1)
 masks = None
 flag = False  # existence of line masks
@@ -142,12 +120,12 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         pass
     else:
-        img = cv2.imread('zebra.jpg')
-        h, w, _ = img.shape
+        #img = cv2.imread('eagle.jpg')
+        #h, w, _ = img.shape
         #img = cv2.resize(img, (int(w/8), int(h/8)))
-        showimage(img)
-        #video = cv2.VideoCapture(0)
+        #showimage(img)
+        video = cv2.VideoCapture(0)
         #video = cv2.VideoCapture('Wildlife.wmv')
-        #playvideo(video, Numberoftsh=7, color=True)
+        playvideo(video, Numberoftsh=7, color=True)
 
 
