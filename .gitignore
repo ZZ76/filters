@@ -5,6 +5,7 @@
 circles.py
 linet.py
 avgcolorinpoly.py
+readkey.py
 mouse.py
 __pycache__/
 .idea/

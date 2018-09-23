@@ -29,21 +29,48 @@ def mousecontrol(event, x, y, flags, param):
         pass
 
 
+def change(code):
+    global x1, y1, x2, y2
+    if readytoavg is True:
+        if code == 0:  # w up
+            y1, y2 = y1 - 1, y2 - 1
+        elif code == 1:  # a left
+            x1, x2 = x1 - 1, x2 - 1
+        elif code == 2:  # s down
+            y1, y2 = y1 + 1, y2 + 1
+        elif code == 3:  # d right
+            x1, x2 = x1 + 1, x2 + 1
+        elif code == 4:  # increase
+            if x1 > x2:
+                x1, y1, x2, y2 = x1 + 1, y1 + 1, x2 - 1, y2 - 1
+            else:
+                x1, y1, x2, y2 = x1 - 1, y1 - 1, x2 + 1, y2 + 1
+        elif code == 5:  # decrease
+            if x2 > x1:
+                x1, y1, x2, y2 = x1 + 1, y1 + 1, x2 - 1, y2 - 1
+            else:
+                x1, y1, x2, y2 = x1 - 1, y1 - 1, x2 + 1, y2 + 1
+        drawonsrc(x1, y1, x2, y2, maskgray=maskgray)
+
+
 def drawonsrc(x1, y1, x2, y2, maskgray=None):
     global masktoshow, canvasmask, src, xc, yc, rc
     masktoshow = src.copy()
     canvasmask = canvas.copy()
     xc, yc, rc = int((x2+x1)/2), int((y2+y1)/2), abs(int((x2-x1)/2))
     cv2.circle(masktoshow, (xc, yc), rc, (0, 255, 0), 2, lineType=cv2.LINE_AA)
-    cv2.circle(canvasmask, (xc, yc), rc, (0, 255, 0), 2, lineType=cv2.LINE_AA)
+    cv2.circle(canvasmask, (xc, yc), rc, (0, 255, 0), 1, lineType=cv2.LINE_AA)
     if maskgray is not None:
         maskgray[:] = 0
         cv2.circle(maskgray, (xc, yc), rc, 255, -1, lineType=cv2.LINE_AA)
-
+    #print('pt1 = (%d, %d), pt2 = (%d, %d), ptc = (%d, %d), rc = %d' % (x1, y1, x2, y2, xc, yc, rc))
+    print('r = ', rc)
 
 
 def avgcolor(src, mask):
     _, contours, _ = cv2.findContours(mask, 1, 2)
+    if len(contours) == 0:
+        return -1
     cnt = contours[0]
     lb, ub, wr, hr = cv2.boundingRect(cnt)
     rb, bb = lb + wr, ub + hr
@@ -83,26 +110,38 @@ def main(src, loadimg=None):
     cv2.namedWindow('canvas')
     cv2.setMouseCallback('canvas', mousecontrol)
     canvasmask = canvas.copy()
-    while(1):
+    while 1:
         cv2.imshow('masktoshow', masktoshow)
         cv2.imshow('canvas', canvasmask)
         #cv2.imshow('canvasmask', canvasmask)
-        cv2.imshow('maskgray', maskgray)
+        #cv2.imshow('maskgray', maskgray)
         k = cv2.waitKey(1) & 0xFF
-        if k == ord('c'):
+        if k == ord('c'):   # calculate color
             if readytoavg is True:
                 color = avgcolor(src, maskgray)
                 print(color)
                 cv2.circle(canvas, (xc, yc), rc, color, -1, lineType=cv2.LINE_AA)
                 canvasmask = canvas.copy()
                 drawonsrc(x1, y1, x2, y2)
-        elif k == ord('s'):
+        elif k == ord('o'):  # save/output
             cv2.imwrite('canvas.png', canvas)
-        elif k == ord('e'):
+        elif k == ord('e'):  # clear
             masktoshow = src.copy()
             canvasmask = canvas.copy()
             maskgray[:] = 0
             readytoavg = False
+        elif k == ord('w'):  # up
+            change(0)
+        elif k == ord('a'):  # left
+            change(1)
+        elif k == ord('s'):  # down
+            change(2)
+        elif k == ord('d'):  # right
+            change(3)
+        elif k == ord(']'):  # increase
+            change(4)
+        elif k == ord('['):  # decrease
+            change(5)
         elif k == 27:
             break
 
@@ -112,10 +151,11 @@ def main(src, loadimg=None):
 pt1 = False
 readytoavg = False
 
-src = cv2.imread('tree.jpg')
+src = cv2.imread('lena.jpg')
 h, w, _ = src.shape
 w, h = 400, int(h*400/w)
 src = cv2.resize(src, (w, h))
-loadimg = cv2.imread('randomcircle.png')
+loadimg = cv2.imread('lena2.png')
+#loadimg = None
 
 main(src, loadimg=loadimg)
