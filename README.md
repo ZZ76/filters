@@ -1,7 +1,8 @@
 # filters
 image and video filters
 
-image information
+
+image information:
 
 [parrot](https://www.pexels.com/photo/bird-flying-zoo-beak-9291/) from [skitterphoto](https://www.pexels.com/@skitterphoto)
 
