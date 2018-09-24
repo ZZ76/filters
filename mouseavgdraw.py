@@ -157,7 +157,7 @@ pt1 = False
 readytoavg = False
 mode = 1
 
-src = cv2.imread('image/eagle.jpg')
+src = cv2.imread('image/tree.jpg')
 h, w, _ = src.shape
 w, h = 800, int(h*800/w)
 src = cv2.resize(src, (w, h))
