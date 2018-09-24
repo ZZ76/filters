@@ -18,7 +18,7 @@ def randomrects(img):
         x2 = w
     if y2 > h:
         y2 = h
-    print('x = %d, y = %d, x2 = %d, y2 = %d' % (x, y, x2, y2))
+    #print('x = %d, y = %d, x2 = %d, y2 = %d' % (x, y, x2, y2))
     img = cv2.rectangle(img, (x, y), (x2, y2), 1, thickness=-1)
     return img
 
@@ -28,12 +28,12 @@ def randomcircle(img):
     cr = random.randint(minl, maxl)  # circle radius
     x = random.randint(0, w)
     y = random.randint(0, h)
-    print('centre = (%d, %d), r = %d' % (x, y, cr))
-    img = cv2.circle(img, (x, y), cr, 255, thickness=-1, lineType=cv2.LINE_AA)
+    #print('centre = (%d, %d), r = %d' % (x, y, cr))
+    img = cv2.circle(img, (x, y), cr, 1, thickness=-1, lineType=cv2.LINE_AA)
     return img
 
 
-def avgcolor2(src, mask):
+def avgcolorslow(src, mask):
     _, contours, _ = cv2.findContours(mask, 1, 2)
     cnt = contours[0]
     lb, ub, wr, hr = cv2.boundingRect(cnt)
@@ -64,7 +64,7 @@ def avgcolor(src, mask):
     cnt = contours[0]
     lb, ub, wr, hr = cv2.boundingRect(cnt)
     rb, bb = lb + wr, ub + hr
-    start = time.time()
+    #start = time.time()
     m = mask[ub:bb, lb:rb]  # sub mask
     m = cv2.resize(m, (wr, hr))  # fix a small shape problem
     subsrc = src[ub:bb, lb:rb]
@@ -74,9 +74,9 @@ def avgcolor(src, mask):
     g = np.sum([g] * m)/n
     r = np.sum([r] * m)/n
     avgcolor = (int(b), int(g), int(r))
-    print('color = ', avgcolor)
-    end = time.time()
-    print('time', end - start)
+    #print('color = ', avgcolor)
+    #end = time.time()
+    #print('time', end - start)
     return avgcolor
 
 
@@ -88,7 +88,7 @@ def avgcolorsmaller(smallerwidth):
         color = avgcolor(src400, maskgraysmall)
     else:
         color = avgcolor(src200, maskgraysmall)
-    print('color =', color)
+    #print('color =', color)
     return color
 
 
@@ -151,11 +151,11 @@ def main(mode='rect', show=True):
 rectlist = [(200, 250, 25), (100, 150, 35), (60, 80, 60), (40, 60, 80), (10, 30, 80), (5, 20, 80)]  # for width 400
 circlelist = [(80, 120, 25), (50, 80, 35), (30, 40, 60), (20, 30, 80), (5, 15, 110), (3, 10, 110)]  # width 400
 # min length/radius, max length/radius, loop times
-rectlist = [(300, 600, 25), (200, 400, 35), (100, 200, 80), (80, 160, 200), (20, 100, 100), (10, 50, 80)]  # width 800
-circlelist = [(160, 240, 25), (100, 160, 35), (60, 80, 60), (40, 60, 80), (10, 30, 110), (6, 20, 110)]  # width 800
+rectlist = [(300, 600, 20), (200, 400, 30), (100, 200, 600), (80, 160, 600), (20, 100, 600), (10, 50, 600)]  # width 800
+circlelist = [(160, 240, 20), (100, 160, 30), (60, 80, 600), (40, 60, 600), (10, 30, 600), (6, 20, 600)]  # width 800
 
 
-src = cv2.imread('image/kim.jpg')
+src = cv2.imread('image/eagle.jpg')
 h, w, _ = src.shape
 newsize = 800
 w, h = newsize, int(h*newsize/w)
@@ -164,7 +164,7 @@ mask = np.zeros((h, w, 1), np.uint8)
 canvas = np.zeros((h, w, 3), np.uint8)
 canvas[:] = 255
 
-canvas = main(mode='rect')
+canvas = main(mode='circle', show=False)
 
 
 cv2.imshow('canvas', canvas)
