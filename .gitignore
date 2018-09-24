@@ -1,7 +1,7 @@
-*.jpg
-*.png
 *.wmv
 *.psd
+dt.jpg
+kim.jpg
 circles.py
 linet.py
 avgcolorinpoly.py
@@ -9,3 +9,4 @@ readkey.py
 mouse.py
 __pycache__/
 .idea/
+result/

@@ -97,10 +97,16 @@ def showimage(img, Numberoftsh = 7, equalizeHist=False):
     cv2.destroyAllWindows()
 
 
-def playvideo(video, Numberoftsh=None, color=False):
+def playvideo(video=None, Numberoftsh=None, color=False):
     global w, h
-    while (True):
-        _, frame = video.read()
+    if video is None:
+        cap = cv2.VideoCapture(0)
+    else:
+        cap = video
+    while True:
+        _, frame = cap.read()
+        if video is None:
+            frame = cv2.flip(frame, 1)
         frame = crosshatching(frame, Numberoftsh=Numberoftsh, equalizeHist=False, color=color)
         cv2.imshow('main', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -124,8 +130,8 @@ if __name__ == "__main__":
         #h, w, _ = img.shape
         #img = cv2.resize(img, (int(w/8), int(h/8)))
         #showimage(img)
-        video = cv2.VideoCapture(0)
-        #video = cv2.VideoCapture('Wildlife.wmv')
-        playvideo(video, Numberoftsh=7, color=True)
+        #video = cv2.VideoCapture(0)
+        #video = cv2.VideoCapture('video/Wildlife.wmv')
+        playvideo(video=None, Numberoftsh=7, color=True)
 
 

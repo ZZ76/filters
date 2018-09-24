@@ -62,7 +62,7 @@ def drawonsrc(x1, y1, x2, y2, maskgray=None):
     cv2.circle(canvasmask, (xc, yc), rc, (0, 255, 0), 1, lineType=cv2.LINE_AA)
     if maskgray is not None:
         maskgray[:] = 0
-        cv2.circle(maskgray, (xc, yc), rc, 255, -1, lineType=cv2.LINE_AA)
+        cv2.circle(maskgray, (xc, yc), rc, 1, -1, lineType=cv2.LINE_AA)
     #print('pt1 = (%d, %d), pt2 = (%d, %d), ptc = (%d, %d), rc = %d' % (x1, y1, x2, y2, xc, yc, rc))
     print('r = ', rc)
 
@@ -75,28 +75,33 @@ def avgcolor(src, mask):
     lb, ub, wr, hr = cv2.boundingRect(cnt)
     rb, bb = lb + wr, ub + hr
     start = time.time()
-    colorlist = None
-    for i in range(ub, bb):
-        for j in range(lb, rb):
-            if mask[i, j] != 0:
-                if colorlist is None:
-                    colorlist = [src[i, j]]
-                    #print(mask[i, j], src[i, j])
-                else:
-                    colorlist = np.append(colorlist, [src[i, j]], axis=0)
-                    #print(mask[i, j], src[i, j])
-    print(colorlist.shape)
-    avg = np.mean(colorlist, axis=0)
-    avgcolor = avg.astype(int)
+    m = mask[ub:bb, lb:rb]  # sub mask
+    m = cv2.resize(m, (wr, hr))  # fix a small shape problem
+    subsrc = src[ub:bb, lb:rb]
+    b, g, r = cv2.split(subsrc)
+    n = np.sum(m)
+    b = np.sum([b]*m)/n  # value sum in b where is 1 in mask
+    g = np.sum([g] * m)/n
+    r = np.sum([r] * m)/n
+    avgcolor = (int(b), int(g), int(r))
     print(avgcolor)
     end = time.time()
     print('time', end - start)
-    avgcolor = (int(avgcolor[0]), int(avgcolor[1]), int(avgcolor[2]))
     return avgcolor
 
 
+def avgcolorsmaller(smallerwidth):   # calculate on smaller size
+    global maskgray, src
+    w2, h2 = smallerwidth, int(h*smallerwidth/w)
+    maskgraysmall = cv2.resize(maskgray, (w2, h2))
+    srcsmall = cv2.resize(src, (w2, h2))
+    color = avgcolor(srcsmall, maskgraysmall)
+    print(color)
+    return color
+
+
 def main(src, loadimg=None):
-    global maskgray, masktoshow, canvas, canvasmask, readytoavg
+    global maskgray, masktoshow, canvas, canvasmask, readytoavg, rc, mode
     maskgray = np.zeros((h, w, 1), np.uint8)
     if loadimg is None:
         canvas = np.zeros((h, w, 3), np.uint8)
@@ -124,7 +129,7 @@ def main(src, loadimg=None):
                 canvasmask = canvas.copy()
                 drawonsrc(x1, y1, x2, y2)
         elif k == ord('o'):  # save/output
-            cv2.imwrite('canvas.png', canvas)
+            cv2.imwrite('result/canvas.png', canvas)
         elif k == ord('e'):  # clear
             masktoshow = src.copy()
             canvasmask = canvas.copy()
@@ -150,12 +155,13 @@ def main(src, loadimg=None):
 
 pt1 = False
 readytoavg = False
+mode = 1
 
-src = cv2.imread('lena.jpg')
+src = cv2.imread('image/building.jpg')
 h, w, _ = src.shape
-w, h = 400, int(h*400/w)
+w, h = 800, int(h*800/w)
 src = cv2.resize(src, (w, h))
-loadimg = cv2.imread('lena2.png')
-#loadimg = None
+#loadimg = cv2.imread('sample/eagle2.png')
+loadimg = None
 
 main(src, loadimg=loadimg)
