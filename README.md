@@ -30,8 +30,8 @@ More details can be added by using mousedraw.py.
     <td><img src="sample/parrot4.png" width="400px"></td>
   </tr>
   <tr>
-    <td><img src="sample/eagle2.png" width="400px"></td>
-    <td><img src="sample/eagle3.png" width="400px"></td>
+    <td><img src="sample/eagle4.png" width="400px"></td>
+    <td><img src="sample/eagle5.png" width="400px"></td>
   </tr>
 </table>
 
