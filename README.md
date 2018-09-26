@@ -3,7 +3,7 @@ image and video filters
 
 **mousedraw.py**
 
-Draw a picture manually like the style below by using mousedraw.py. The first timeI saw this type of painting was on a magazine very long time ago(about 2005). It was a series portrait of famous people and I can only remeber there was a Bin Ladin in it. I cannot find any thing about it on Internet now. Please tell me if you know anything about that series.
+Draw a picture manually like the style below by using mousedraw.py. The first time I saw this type of painting was on a magazine very long time ago(about 2005). It was a series portrait of famous people and I can only remeber there was a Bin Ladin in it. I cannot find any thing about it on Internet now. Please tell me if you know anything about that series.
 
 <img src="sample/lena4.png" width="400">
 
