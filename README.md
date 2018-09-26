@@ -1,8 +1,43 @@
 # filters
 image and video filters
 
+**mousedraw.py**
 
-image information:
+Draw a picture manually like the style below by using mousedraw.py. The first timeI saw this type of painting was on a magazine very long time ago(about 2005). It was a series portrait of famous people and I can only remeber there was a Bin Ladin in it. I cannot find any thing about it on Internet now. Please tell me if you know anything about that series.
+
+<img src="sample/lena4.png" width="400">
+
+The idea is to calculate the average color in the drawn circle area and paint on the canvas.
+
+To calculate the avgcolor, it first fill the area with value 1 on an 1-channel mask which value are all 0. The mask size is same as the source image. Then split the R, G, B channels of src image. For each channel, calculate the Hadamard product with the mask. So, only values in the purposed area of each channel are remained. Finally, the avgcolor of each channel can be get by sum(channel)/sum(mask).
+
+operations:</br>
+drag mouse to draw circle</br>
+w, a, s, d - move the circle by 1 pixel</br>
+'&#91;' / '&#93;' - increase/ decrease radius</br>
+e - clear</br>
+c - fill the circle area</br>
+o - save image</br>
+</br>
+
+**randomrects.py**
+
+Generate circle or rectangular randomly to cover the image with calculating the average color to fill the area.
+More details can be added by using mousedraw.py.
+<table>
+  <tr>
+    <td><img src="sample/parrot3.png" width="400px"></td>
+    <td><img src="sample/parrot4.png" width="400px"></td>
+  </tr>
+</table>
+
+s - save image
+
+
+</br>
+</br>
+
+**image information:**
 
 [parrot](https://www.pexels.com/photo/bird-flying-zoo-beak-9291/) from [skitterphoto](https://www.pexels.com/@skitterphoto)
 
