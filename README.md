@@ -7,7 +7,7 @@ Draw a picture manually like the style below by using mousedraw.py. The first ti
 
 <img src="sample/lena4.png" width="400">
 
-The idea is to calculate the average color in the drawn circle area and paint on the canvas.
+The idea is to calculate the average color in the drawn circle area and paint on the canvas. Draw circles wherever you want without worry about the color.
 
 To calculate the avgcolor, it first fill the area with value 1 on an 1-channel mask which value are all 0. The mask size is same as the source image. Then split the R, G, B channels of src image. For each channel, calculate the Hadamard product with the mask. So, only values in the purposed area of each channel are remained. Finally, the avgcolor of each channel can be get by sum(channel)/sum(mask).
 
