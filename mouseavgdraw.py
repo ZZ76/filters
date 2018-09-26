@@ -57,7 +57,19 @@ def drawonsrc(x1, y1, x2, y2, maskgray=None):
     global masktoshow, canvasmask, src, xc, yc, rc
     masktoshow = src.copy()
     canvasmask = canvas.copy()
-    xc, yc, rc = int((x2+x1)/2), int((y2+y1)/2), abs(int((x2-x1)/2))
+    if abs(x1 - x2) >= abs(y1 - y2):
+        rc = abs(int((y2 - y1) / 2))
+    else:
+        rc = abs(int((x2 - x1) / 2))
+    if y2 >= y1:
+        yc = y1 + rc
+    else:
+        yc = y1 - rc
+    if x2 >= x1:
+        xc = x1 + rc
+    else:
+        xc = x1 - rc
+    #xc, yc, rc = int((x2 + x1) / 2), int((y2 + y1) / 2), abs(int((x2 - x1) / 2))
     cv2.circle(masktoshow, (xc, yc), rc, (0, 255, 0), 2, lineType=cv2.LINE_AA)
     cv2.circle(canvasmask, (xc, yc), rc, (0, 255, 0), 1, lineType=cv2.LINE_AA)
     if maskgray is not None:
