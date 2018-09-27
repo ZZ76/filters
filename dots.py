@@ -138,8 +138,8 @@ dots = None
 resizerate = 25   # default 25, w/resizerate and h/resizerate is how many dots in x and y axis
 
 #vd = cv2.VideoCapture('Wildlife.wmv')
-videodots()
-'''img = cv2.imread('zebra.jpg')
+videodots()   # use camera and display
+'''img = cv2.imread('image/owl.jpg')
 h, w, _ = img.shape
-img = cv2.resize(img, (int(w/1), int(h/1)))
+img = cv2.resize(img, (int(w/2), int(h/2)))
 imagedots(img)'''

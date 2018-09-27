@@ -155,7 +155,7 @@ rectlist = [(200, 400, 50), (100, 200, 300), (80, 160, 600), (20, 100, 600), (10
 circlelist = [(100, 120, 50), (40, 60, 600), (10, 30, 600), (6, 20, 600)]  # width 800
 
 
-src = cv2.imread('image/lena.jpg')
+src = cv2.imread('image/eagle.jpg')
 h, w, _ = src.shape
 newsize = 800
 w, h = newsize, int(h*newsize/w)
