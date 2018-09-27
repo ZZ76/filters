@@ -37,6 +37,23 @@ More details can be added by using mousedraw.py.
 
 s - save image
 
+**crosshatching.py**
+
+Crosshatching line style filter.
+
+<table>
+  <tr>
+    <td><img src="sample/lenacross.png"></td>
+    <td><img src="sample/lenacross2.png"></td>
+    <td><img src="sample/lenacross3.png"></td>
+  </tr>
+</table>
+
+**dots.py**
+
+This filter can be present better in video mode with a dynamic dot size. The radius of dot is determined by the value in grayscale. So it can't work well on images with a low contrast or too bright.
+
+<img src="sample/dots.png" width="400px">
 
 </br>
 </br>
