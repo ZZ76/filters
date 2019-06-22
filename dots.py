@@ -96,6 +96,7 @@ def videodots(video=None):
         if dots is None:
             dots = createdotmat(frame)
         #frame = cv2.resize(frame, (64, 48))
+        #cv2.imshow('frame', frame)
         frame = cv2.resize(frame, (w, h), interpolation=cv2.INTER_AREA)
         frame = cv2.flip(frame, 1)
         f, gm, cm = createmasks(frame, color=True)

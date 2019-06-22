@@ -4,12 +4,13 @@ import math
 from numpy import random
 import sys
 import time
+import util
 
 
 def mousecontrol(event, x, y, flags, param):
     global x1, y1, x2, y2, readytoavg, pt1, maskgray
     if event == cv2.EVENT_LBUTTONDOWN:  # record start point
-        print('on')
+        print('\non')
         if pt1 is False:
             x1, y1 = x, y  # point 1
             pt1 = True  # point 1 is recorded
@@ -26,7 +27,6 @@ def mousecontrol(event, x, y, flags, param):
             drawonsrc(x1, y1, x2, y2, maskgray=maskgray)
             pt1 = False
             readytoavg = True
-        pass
 
 
 def change(code):
@@ -73,48 +73,15 @@ def drawonsrc(x1, y1, x2, y2, maskgray=None):
     cv2.circle(masktoshow, (xc, yc), rc, (0, 255, 0), 2, lineType=cv2.LINE_AA)
     cv2.circle(canvasmask, (xc, yc), rc, (0, 255, 0), 1, lineType=cv2.LINE_AA)
     if maskgray is not None:
-        maskgray[:] = 0
-        cv2.circle(maskgray, (xc, yc), rc, 1, -1, lineType=cv2.LINE_AA)
+        maskgray[:, :, :] = 0
+        cv2.circle(maskgray, (xc, yc), rc, (1, 1, 1), -1, lineType=cv2.LINE_AA)
     #print('pt1 = (%d, %d), pt2 = (%d, %d), ptc = (%d, %d), rc = %d' % (x1, y1, x2, y2, xc, yc, rc))
-    print('r = ', rc)
-
-
-def avgcolor(src, mask):
-    _, contours, _ = cv2.findContours(mask, 1, 2)
-    if len(contours) == 0:
-        return -1
-    cnt = contours[0]
-    lb, ub, wr, hr = cv2.boundingRect(cnt)
-    rb, bb = lb + wr, ub + hr
-    start = time.time()
-    m = mask[ub:bb, lb:rb]  # sub mask
-    m = cv2.resize(m, (wr, hr))  # fix a small shape problem
-    subsrc = src[ub:bb, lb:rb]
-    b, g, r = cv2.split(subsrc)
-    n = np.sum(m)
-    b = np.sum([b]*m)/n  # value sum in b where is 1 in mask
-    g = np.sum([g] * m)/n
-    r = np.sum([r] * m)/n
-    avgcolor = (int(b), int(g), int(r))
-    print(avgcolor)
-    end = time.time()
-    print('time', end - start)
-    return avgcolor
-
-
-def avgcolorsmaller(smallerwidth):   # calculate on smaller size
-    global maskgray, src
-    w2, h2 = smallerwidth, int(h*smallerwidth/w)
-    maskgraysmall = cv2.resize(maskgray, (w2, h2))
-    srcsmall = cv2.resize(src, (w2, h2))
-    color = avgcolor(srcsmall, maskgraysmall)
-    print(color)
-    return color
+    print('r = ', rc, end='\r', flush=True)
 
 
 def main(src, loadimg=None):
     global maskgray, masktoshow, canvas, canvasmask, readytoavg, rc, mode
-    maskgray = np.zeros((h, w, 1), np.uint8)
+    maskgray = np.zeros((h, w, 3), np.uint8)
     if loadimg is None:
         canvas = np.zeros((h, w, 3), np.uint8)
         canvas[:] = 255
@@ -127,7 +94,7 @@ def main(src, loadimg=None):
     cv2.namedWindow('canvas')
     cv2.setMouseCallback('canvas', mousecontrol)
     canvasmask = canvas.copy()
-    while 1:
+    while mode:
         cv2.imshow('masktoshow', masktoshow)
         cv2.imshow('canvas', canvasmask)
         #cv2.imshow('canvasmask', canvasmask)
@@ -135,7 +102,9 @@ def main(src, loadimg=None):
         k = cv2.waitKey(1) & 0xFF
         if k == ord('c'):   # calculate color
             if readytoavg is True:
-                color = avgcolor(src, maskgray)
+                color = util.get_avgcolor_downsize(src, maskgray, 100)
+                #util.get_avgcolor_crop(src, maskgray)
+                #util.get_avgcolor_full(src, maskgray)
                 print(color)
                 cv2.circle(canvas, (xc, yc), rc, color, -1, lineType=cv2.LINE_AA)
                 canvasmask = canvas.copy()
@@ -145,7 +114,7 @@ def main(src, loadimg=None):
         elif k == ord('e'):  # clear
             masktoshow = src.copy()
             canvasmask = canvas.copy()
-            maskgray[:] = 0
+            maskgray[:, :, :] = 0
             readytoavg = False
         elif k == ord('w'):  # up
             change(0)
@@ -169,7 +138,7 @@ pt1 = False
 readytoavg = False
 mode = 1
 
-src = cv2.imread('image/eagle.jpg')
+src = cv2.imread('image/parrot.jpg')
 h, w, _ = src.shape
 w, h = 800, int(h*800/w)
 src = cv2.resize(src, (w, h))
